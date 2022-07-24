@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--    <h1>t测试页面</h1>-->
+<!--    <h1 th:text="${name}"></h1>-->
+
+    <div id="app"></div>
+
+    <script type="text/javascript">
+
+
+        fetch("/Data",{
+            method:"GET"
+        })
+        .then(res=>res.json())
+        .then(res=>{
+            var app  =  document.getElementById("app");
+            app.innerHTML= `
+                <h1>
+                    ${res.name}
+                </h1>
+                <h1>
+                    ${res.age}
+                </h1>
+                <h1>
+                    ${res.id}
+                </h1>
+               `
+        })
+
+
+    </script>
+
+</body>
+</html>

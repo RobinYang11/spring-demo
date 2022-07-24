@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+    <table id="tb" border="1"></table>
+    <script>
+
+  
+        queryRoom();
+
+        /** 
+         * 查询room
+         */
+        function queryRoom() {
+            var http = new XMLHttpRequest();
+            http.open("GET", `/api/queryRoom`)
+            http.send()
+
+            http.onload = function () {
+                var json = JSON.parse(http.response)
+                console.log(Array.isArray(json))
+                getNum(json)
+                console.log("222", http.response)
+            }
+        }
+
+        // function getRoom() {
+        //     var html = ""
+        //     console.log(html)
+        //     json.forEach(function (i) {
+        //         html += `
+        //         <tr>
+        //             <td>${i.id}</td>
+        //             <td>${i.name}</td>
+        //             <td>${i.room}</td>
+        //             <td>${i.tid}</td>
+        //         </tr>
+        //         `
+        //     })
+
+        //     var tb = document.getElementById("tb")
+        //     tb.innerHTML = html
+        // }
+
+        function getNum(data) {
+            var html = ""
+            data.forEach(function (i) {
+                html += `
+                <tr>
+                    <td>${i.id}</td>
+                    <td>${i.name}</td>
+                    <td>${i.room}</td>
+                    <td><button class="btn">删除</button></td>
+                </tr>
+                `
+            })
+            var tb = document.getElementById("tb")
+            tb.innerHTML = html;
+
+            //请求删除数据
+            //先将标签在Html页面展示，在绑定事件 
+            var btns = document.getElementsByClassName("btn")
+            //btns为HTMLcollection对象
+            console.log(btns)
+            //将btns转为数组，进行遍历
+            btns = Array.from(btns)
+            btns.forEach(function (j) {
+                //给 button 绑定事件
+                j.addEventListener("click", function (e) {
+                    console.dir(e.target.parentNode.parentNode.children[0].innerText())
+                    //将字符串化为整数
+                    var id = parseInt(e.target.parentNode.parentNode.children[0].innerText())
+                    var http = new XMLHttpRequest()
+                    http.open("POST", ``)
+                    //请求参数化为JSON格式
+                    http.setRequestHeader("content-type", "application/json")
+                    //把JSON格式转为字符串
+                    var params = JSON.stringify({
+                        id: id
+                    })
+                    //当POST请求时，send要传参数
+                    http.send(params)
+                    http.onload = function () {
+                        queryRoom();
+                    }
+                })
+            })
+
+        }
+
+
+    </script>
+</body>
+
+</html>

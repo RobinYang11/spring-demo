@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.robin.demoproject.dao.IBookDao">
+
+    <insert id="addBook" >
+        INSERT INTO
+        book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bid !=null and bid!= 0">bid,</if>
+            <if test="uid !=null and uid!= 0">uid,</if>
+            <if test=" name !=null and name!=''">name,</if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="bid !=null and bid!=0">#{bid},</if>
+            <if test="uid !=null and uid!=0">#{uid},</if>
+            <if test="name !=null and name!=''">#{name},</if>
+        </trim>
+    </insert>
+
+    <select id="queryBook" resultType="com.robin.demoproject.bean.BookBean" parameterType="com.robin.demoproject.bean.BookBean">
+        SELECT * FROM
+        book
+        <where>
+            1=1
+            <if test="bid != null and bid!= 0">
+                and bid=#{bid}
+            </if>
+            <if test="uid != null and uid !=0">
+                and uid=#{uid}
+            </if>
+            <if test="name != null and name !=''">
+                and name=#{name}
+            </if>
+
+        </where>
+    </select>
+    <update id="updateBook" parameterType="com.robin.demoproject.bean.BookBean">
+        update book
+        <set>
+            <if test="name != null and name !=''">
+                name =#{name}
+            </if>
+            <if test="uid != null and uid !=0">
+                uid =#{uid}
+            </if>
+        </set>
+        where bid =#{bid}
+
+    </update>
+
+
+    <resultMap id="userBookMap" type="com.robin.demoproject.dto.UserDto">
+        <id column="id" property="id" />
+        <id column="name" property="name" />
+        <id column="age" property="age" />
+        <collection property="books" ofType="com.robin.demoproject.bean.BookBean">
+            <id column="bid" property="bid"/>
+            <result column="bname" property="name"/>
+            <result column="buid" property="uid"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryUserBooks" parameterType="java.lang.Integer"  resultMap="userBookMap">
+        SELECT
+            u.*,
+            b.bid as bid,
+            b.name as bname,
+            b.uid as buid
+        FROM
+            user as u
+        LEFT JOIN
+             book  as b
+        ON id = uid
+             WHERE
+        id = #{uid}
+    </select>
+
+    <delete id="deleteBook"  parameterType="com.robin.demoproject.bean.BookBean">s
+        DELETE from
+         book
+        where bid =#{bid}
+    </delete>
+
+</mapper>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        td {
+            border-right: 1px solid rgba(0, 0, 0, .06);
+            border-bottom: 1px solid rgba(0, 0, 0, .06);
+            transition: background .3s;
+            position: relative;
+            padding: 16px;
+            overflow-wrap: break-word;
+        }
+
+        .t-header {
+            background: rgb(202, 200, 200);
+        }
+
+        #page {
+            display: flex;
+        }
+
+        .active {
+            background: red;
+            color: white;
+        }
+
+        #page li {
+            list-style: none;
+            width: 40px;
+            height: 40px;
+            border: 1px solid gray;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="username">
+
+    </table>
+    <ul id="page">
+
+    </ul>
+
+    <form method="post" action="/api/addFormUser">
+        <div>
+            <label>姓名：</label><input name="name">
+        </div>
+        <div>
+            <label>年龄：</label><input name="age">
+        </div>
+        <div>
+            <label>身高：</label><input name="height">
+        </div>
+        <div>
+            <label>体重：</label><input name="weight">
+        </div>
+        <div>
+            <label>性别：</label>
+            <select name="sex">
+                <option value="1">男</option>
+                <option value="2">女</option>
+            </select>
+        </div>
+        <div>
+            <label>邮件：</label><input name="email">
+        </div>
+        <div>
+            <label>出生日期:</label><input name="birthsday">
+        </div>
+        <div>
+            <label>地址：</label><input name="address">
+        </div>
+        <div>
+            <label>电话：</label><input name="phone">
+        </div>
+        <input type="submit">
+        <table id="tb" border="1"></table>
+    </form>
+
+    <script>
+
+        // 全局变量定义当前页
+        var page = 1;
+
+        getU(page, 2)
+
+        /**
+         * page 当前页
+         * pageSize 每页的数量
+         * 查询用户数据
+         */
+        function getU(page, pageSize) {
+            var http = new XMLHttpRequest();
+            http.open("GET", `/api/queryUser?page=${page}&pageSize=${pageSize}`)
+            http.send()
+            http.onload = function () {
+                var json = JSON.parse(http.response)
+                // 渲染分页
+                setPage(json.total, pageSize)
+                // 渲染用户数据
+                renderUser(json)
+            }
+        }
+
+        /**
+         * total 数据总数
+         * pageSize 没有的数量
+         */
+        function setPage(total, pageSize) {
+
+            // 用来保存总页数
+            var pages = 0;
+            // 取余
+            var rest = total % pageSize;
+
+            if (rest === 0) {
+                pages = total / pageSize;
+            } else {
+                pages = total / pageSize + 1
+            }
+
+            var html = '';
+
+            for (var i = 1; i <= pages; i++) {
+                var style = page === i ? 'active' : ''
+                html += `
+                    <li  class="${style}" >${i}</li>
+                `
+            }
+            document.getElementById("page").innerHTML = html;
+
+            var lis = document.querySelectorAll('#page li');
+            lis = Array.from(lis);
+
+            lis.forEach(li => {
+
+                li.addEventListener('click', function (e) {
+                    var v = parseInt(e.target.innerText);
+                    page = v;
+                    getU(v, 2)
+                })
+            })
+
+        }
+
+        /**
+         * 渲染用户
+         */
+        function renderUser(data) {
+            var html = `
+                <tr class="t-header">
+                    <th>id</th>
+                    <th>姓名</th>
+                    <th>年龄</th>
+                    <th>身高</th>
+                    <th>w体重</th>
+                    <th>性别</th>
+                    <th>邮箱</th>
+                    <th>生日</th>
+                    <th>地址</th>
+                    <th>手机号</th>
+                    <th>操作</th>
+                </tr>
+            `
+            data.users.forEach(i => {
+                html += `
+                <tr>
+                    <td>${i.id}:</td>
+                    <td>${i.name}:</td>
+                    <td>${i.age}:</td>
+                    <td>${i.height}:</td>
+                    <td>${i.weight}:</td>
+                    <td>${i.sex === 1 ? "男" : "女"}:</td>
+                    <td>${i.email}:</td>
+                    <td>${i.birthsday}:</td>
+                    <td>${i.address}:</td>
+                    <td>${i.phone}:</td>
+                    <td>
+                        <button class="btn">删除</button>
+                        <button>编辑</button>
+                    </td>
+                </tr>
+                `
+            })
+            document.getElementById("username").innerHTML = html;
+
+            var btns = document.getElementsByClassName("btn")
+            console.log(btns)
+            //将HTMLcollection对转化为数组进行遍历
+            btns = Array.from(btns)
+            btns.forEach(function (j) {
+                console.log("%%%%", j)
+                j.addEventListener("click", function (e) {
+                    //转换为整数
+                    var id = parseInt(e.target.parentNode.parentNode.children[0].innerText)
+
+                    var http = new XMLHttpRequest();
+                    http.open("POST", `/api/deleteUser`)
+                    //请求参数为json对象
+                    http.setRequestHeader("content-type", "application/json")
+                    //post 请求为字符串 将JSON对象转化为String
+                    var nums = JSON.stringify({
+                        id: id
+                    })
+                    http.send(nums);
+                    //当删除成功时，重新请求
+                    http.onload = function () {
+                        getU(page, 2)
+                    }
+                })
+            })
+
+        }
+    </script>
+</body>
+
+</html>

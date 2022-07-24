@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .id {
+            border: 1px solid red;
+        }
+
+        .age {
+            font-size: 12px;
+            color: gray;
+        }
+
+        .age>input {
+            background-color: rgb(235, 235, 235);
+            border: none;
+            width: 100px;
+        }
+
+        .id>input {
+            background-color: rgb(235, 235, 235);
+            border: none;
+            width: 100px;
+        }
+
+        .name>input {
+            background-color: rgb(235, 235, 235);
+            border: none;
+            width: 100px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header"></div>
+    <table id="tb" border="1"></table>
+    <table id="table" border="" 1></table>
+    <script>
+
+        queryUser();
+        function queryUser() {
+            var http = new XMLHttpRequest();
+            http.open("GET", `/api/queryUser`)
+            http.send()
+
+            http.onload = function () {
+                var json = JSON.parse(http.response)
+                console.log(Array.isArray(json))
+                getNum(json)
+                console.log("222", http.response)
+            }
+        }
+        // //展示数据
+        // function getNum(data) {
+        //     var html = "";
+
+        //     data.forEach(function (i) {
+        //         console.log(i)
+        //         html += `
+        //         <div class="aa">
+        //             <div class="id">${i.id}<input type="text"/> </div>
+        //             <div class="age">${i.age}<input type="text"/></div>
+        //             <div class="name"> ${i.name}<input type="text"/></div>
+        //          </div>
+        //         `
+
+        //     })
+
+        //     console.log(html)
+
+
+        //     var header = document.getElementById("header")
+        //     header.innerHTML = html
+        // }
+
+        //表格展示
+        function getNum(data) {
+            var html = ""
+            data.forEach(function (i) {
+                html += `
+                <tr>
+                    <td>${i.id}</td>
+                    <td>${i.age}</td>
+                    <td>${i.name}</td>
+                    <td> <button class="btn"> 删除 </button> </td>
+                </tr>
+                `
+            })
+
+
+            var tb = document.getElementById("tb")
+            tb.innerHTML = html;
+
+            // 设置完html后 再绑定事件
+            var btns = document.getElementsByClassName('btn');
+            // 把HTMLCollecton 转换成数组 
+            btns = Array.from(btns)
+
+            btns.forEach(j => {
+                j.addEventListener("click", function (e) {
+
+                    console.log(typeof (e.target.parentNode.parentNode.children[0].innerText))
+
+                    var id = parseInt(e.target.parentNode.parentNode.children[0].innerText)
+                    var http = new XMLHttpRequest();
+
+                    http.open("POST", '/api/deleteUser');
+
+                    //设置请求参数json 格式
+                    http.setRequestHeader("content-type", "application/json")
+
+
+                    // 把json 转成 字符串
+                    var params = JSON.stringify({
+                        id: id
+                    })
+
+                    http.send(params);
+
+                    // 当删除成功时，重新请求
+                    http.onload = function () {
+                        queryUser();
+                    }
+                })
+            })
+        }
+
+    </script>
+</body>
+
+</html>

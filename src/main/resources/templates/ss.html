@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #app {
+      display: flex;
+      width: 1200px;
+      flex-wrap: wrap;
+      margin: 0 auto;
+    }
+
+    .card-wrapper {
+      flex-basis: 25%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      border: 1px solid rgb(135, 135, 135);
+      padding: 10px;
+    }
+
+    .card>img {
+      width: 100%;
+    }
+
+    .card>.price {
+      color: red;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+  <button onclick="aa()">click</button>
+
+  <div id="app"></div>
+
+  <script>
+
+
+    getData();
+
+
+    function getData() {
+      var http = new XMLHttpRequest();
+      http.open("GET", 'data.json')
+      http.send();
+      console.log(http)
+
+      http.onload = function () {
+        console.log(typeof http.response)
+        console.log(http.response) 
+        var res = JSON.parse(http.response)
+        console.log(Array.isArray(res))
+        showData(res)
+        console.log("$$$", http.response)
+      }
+
+      console.log("###", http.response)
+    }
+
+    function aa() {
+      console.log("#￥#￥#￥#￥###￥#￥")
+    }
+
+    // 展示数据
+    function showData(data) {
+      var html = ''
+      data.forEach(function (i) {
+        html += `
+            <div class="card-wrapper">
+              <div class="card">
+                <img src=${i.img} /> 
+                <div class="price">￥${i.price}</div>
+                <div class="desc">${i.desc}</div>
+                <button>点击购买</button>
+              </div> 
+            </div>
+         `
+      })
+      var app = document.getElementById("app")
+      app.innerHTML = html;
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<html>
+
+
+    <body>
+
+
+        <ul id="books">
+
+        </ul>
+
+
+        <form method="post" action="/api/addFormBook">
+            <div>
+               <label>书名</label>  <input  name="name" >
+            </div>
+            <div>
+                <label>用户id</label>  <input type="number"  name="uid" >
+            </div>
+            <input  type="submit" />
+        </form>
+
+        <script type="text/javascript">
+
+            getBookData();
+
+            //请求book数据
+            function getBookData(){
+                var http =new XMLHttpRequest();
+                http.open("get","/api/queryBook");
+                http.send();
+                http.onload = function(){
+                      var json = JSON.parse(http.response);
+                      renderData(json);
+                }
+            }
+
+            // 渲染数据
+            function renderData(data){
+                var html= ""
+                data.forEach(i =>{
+
+                    html += `
+                      <li>
+                      <span> ${i.name}: </span>
+                      <span> ${i.uid}: </span>
+                      <span> ${i.bid} </span>
+                    `
+                })
+               document.getElementById("books").innerHTML = html;
+            }
+
+        </script>
+    </body>
+</html>

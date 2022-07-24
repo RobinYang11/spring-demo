@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.robin.demoproject.dao.IUserDao">
+
+    <insert id="addUser">
+        INSERT INTO
+        user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="age !=null and age!= 0 ">age,</if>
+            <if test=" name!=null and name!=''">name,</if>
+            <if test=" phone!=null and phone!=''">phone,</if>
+            <if test=" address!=null and address!=''">address,</if>
+            <if test=" email!=null and email!=''">email,</if>
+            <if test=" sex!=null and sex!=0">sex,</if>
+            <if test=" height!=null and height!=0">height,</if>
+            <if test=" birthsday!=null and birthsday!=''">birthsday,</if>
+            <if test=" weight!=null and weight!=0">weight,</if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="age !=null and age!=0">#{age},</if>
+            <if test="name!=null and name!=''">#{name},</if>
+            <if test="phone !=null and phone!=''">#{phone},</if>
+            <if test="address!=null and address!=''">#{address},</if>
+            <if test="email!=null and email!=''">#{email},</if>
+            <if test="sex !=null and sex!=0">#{sex},</if>
+            <if test="height !=null and height!=0">#{height},</if>
+            <if test="birthsday!=null and birthsday!=''">#{birthsday},</if>
+            <if test="weight !=null and weight!=0">#{weight},</if>
+        </trim>
+    </insert>
+
+    <select id="queryUser" resultType="com.robin.demoproject.bean.UserBean"
+            parameterType="com.robin.demoproject.dto.UserParamDto">
+        SELECT
+          *
+        FROM
+         user
+
+        <where>
+            1=1
+            <if test="id != null and id !=0">
+                and id = #{id}
+            </if>
+            <if test="name != null and name !='' ">
+                and name = #{name}
+            </if>
+            <if test="age != null and age !=0 ">
+                and age = #{age}
+            </if>
+            <if test="phone != null and phone !=''">
+                and phone = #{phone}
+            </if>
+            <if test="address != null and address !='' ">
+                and address = #{address}
+            </if>
+            <if test="email != null and email !='' ">
+                and email = #{email}
+            </if>
+            <if test="sex != null and sex !=0">
+                and sex = #{sex}
+            </if>
+            <if test="height != null and height !=0 ">
+                and height = #{height}
+            </if>
+            <if test="birthsday != null and birthsday !='' ">
+                and birthsday = #{birthsday}
+            </if>
+            <if test="weight != null and weight !=0 ">
+                and weight = #{weight}
+            </if>
+        </where>
+        LIMIT #{pageSize}
+        OFFSET #{page}
+    </select>
+
+    <update id="updateUser" parameterType="com.robin.demoproject.bean.UserBean">
+        UPDATE
+        user
+        <set>
+            <if test="name != null and name !=''">
+                name = #{name}
+            </if>
+            <if test="age != null and age !=0">
+                age = #{age}
+            </if>
+            <if test="phone != null and phone !=''">
+                phone = #{phone}
+            </if>
+            <if test="address != null and address !=''">
+                address = #{address}
+
+            </if>
+            <if test="email != null and email !=''">
+                email = #{email}
+            </if>
+            <if test="sex != null and sex !=0">
+                sex = #{sex}
+
+            </if>
+            <if test="height != null and height !=0">
+                height = #{height}
+            </if>
+            <if test="birthsday != null and birthsday !=''">
+                birthsday = #{birthsday}
+            </if>
+            <if test="weight != null and weight !=0">
+                weight = #{weight}
+
+            </if>
+
+
+        </set>
+        where id =#{id}
+    </update>
+    <delete id="deleteUser" parameterType="com.robin.demoproject.bean.UserBean">
+        delete from
+        user
+        where
+        id=#{id}
+    </delete>
+
+    <select id="countTotal" resultType="java.lang.Integer">
+        SELECT
+        COUNT( id ) AS total
+        FROM
+        user
+    </select>
+
+
+</mapper>
+

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.robin.demoproject.dao.IRoomDao">
+
+    <insert id="addRoom" >
+        INSERT INTO
+            room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="room !=null and room!= 0">room,</if>
+            <if test=" name !=null and name!=''">name,</if>
+            <if test=" tid !=null and tid!=0">tid,</if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="room !=null and room!=0">#{room},</if>
+            <if test="name !=null and name!=''">#{name},</if>
+            <if test="tid !=null and tid!=o">#{tid},</if>
+        </trim>
+    </insert>
+
+    <select id="queryRoom" resultType="com.robin.demoproject.bean.RoomBean" parameterType="com.robin.demoproject.dto.RoomParamDto">
+        SELECT * FROM
+            room
+        <where>
+            1=1
+            <if test="id != null and id != 0">
+                 and id=#{id}
+             </if>
+            <if test="name != null and name !=''">
+                and name=#{name}
+            </if>
+            <if test="room != null and room !=0">
+                and room=#{room}
+            </if>
+            <if test="tid != null and tid !=0">
+                and tid=#{tid}
+            </if>
+        </where>
+        LIMIT #{pageSize}
+        OFFSET #{page}
+    </select>
+    <update id="updateRoom" parameterType="com.robin.demoproject.bean.RoomBean">
+        update room
+        <set>
+            <if test="name != null and name !=''">
+                name =#{name}
+            </if>
+            <if test="room != null and room !=0">
+                room =#{room}
+            </if>
+            <if test="tid != null and tid !=0">
+                tid =#{tid}
+            </if>
+        </set>
+        where id =#{id}
+
+    </update>
+    <resultMap id="userRoomMap" type="com.robin.demoproject.dto.UserDto1">
+        <id column="id" property="id" />
+        <id column="name" property="name" />
+        <id column="age" property="age" />
+        <collection property="rooms" ofType="com.robin.demoproject.bean.RoomBean">
+            <id column="rid" property="id"/>
+            <result column="rname" property="name"/>
+            <result column="btid" property="tid"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryUserRooms" parameterType="java.lang.Integer"  resultMap="userRoomMap">
+        SELECT
+        u.*,
+        r.id as rid,
+        r.name as rname,
+        r.tid as btid
+        FROM
+        user as u
+        LEFT JOIN
+        room  as r
+        ON u.id = tid
+        WHERE
+        u.id=#{tid}
+    </select>
+
+    <delete id="deleteRoom"  parameterType="com.robin.demoproject.bean.RoomBean">
+
+        DELETE from
+        room
+        where id =#{id}
+    </delete>
+    <select id="countTotal" resultType="java.lang.Integer">
+        SELECT
+        COUNT( id ) AS total
+        FROM
+        room
+    </select>
+</mapper>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="header"> </div>
+  <script>
+    getR()
+    function getR() {
+      var http = new XMLHttpRequest()
+      http.open("GET", `/api/queryRoom`);
+      http.send()
+      http.onload = function () {
+        var json = JSON.parse(http.response)
+        getNum(json)
+
+      }
+    }
+
+    function getNum() {
+      var html = ""
+      json.forEach(function (i) {
+        html = `
+        <div>
+        <div>${i.id}</div>
+        <div>${i.name}</div>
+        <div>${i.room}</div>
+        <div>${i.tid}</div>
+        </div>
+        `
+      })
+      var header = document.getElementById("header")
+      header.innerHTML = html
+    }
+  </script>
+</body>
+
+</html>
